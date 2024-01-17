@@ -1,0 +1,24 @@
+/*!
+ * 
+ *     MCAFEE RESTRICTED CONFIDENTIAL
+ *     Copyright (c) 2024 McAfee, LLC
+ *
+ *     The source code contained or described herein and all documents related
+ *     to the source code ("Material") are owned by McAfee or its
+ *     suppliers or licensors. Title to the Material remains with McAfee
+ *     or its suppliers and licensors. The Material contains trade
+ *     secrets and proprietary and confidential information of McAfee or its
+ *     suppliers and licensors. The Material is protected by worldwide copyright
+ *     and trade secret laws and treaty provisions. No part of the Material may
+ *     be used, copied, reproduced, modified, published, uploaded, posted,
+ *     transmitted, distributed, or disclosed in any way without McAfee's prior
+ *     express written permission.
+ *
+ *     No license under any patent, copyright, trade secret or other intellectual
+ *     property right is granted to or conferred upon you by disclosure or
+ *     delivery of the Materials, either expressly, by implication, inducement,
+ *     estoppel or otherwise. Any license under such intellectual property rights
+ *     must be expressed and approved by McAfee in writing.
+ *
+ */(()=>{"use strict";const t=0,e=0,n=1,o=2,r=3,a=4,c=1,s=2,d=3,i=4,l={BACKGROUND:"BACKGROUND",CONTENT:"CONTENT",TELEMETRY:"TELEMETRY"},u={DEFAULT:"color: #000000; font-weight: normal; font-style:normal; background: #FFFFFF;",BACKGROUND:"color: #8D0DBA; font-weight: bold; background: #FFFFFF;",CONTENT:"color: #F54A26; font-weight: bold; background: #FFFFFF;",TELEMETRY:"color: #147831; font-weight: bold; background: #FFFFFF;"};class m{static log(t,e=null){f(t,c,e)}static error(t,e=null){f(t,s,e)}static warn(t,e=null){f(t,d,e)}static debug(t,e=null){f(t,i,e)}}const f=(m,f,g)=>{const p=t;if(p===e)return;let h="chrome-extension:"===location.protocol?l.BACKGROUND:l.CONTENT;g&&l[g]&&(h=g);const F=new Date,w=f===s?m:`%c[${h} ${F.toLocaleString([],{hour:"2-digit",minute:"2-digit",hour12:!0})}]: %c${m}`,y=u.DEFAULT;let U=u[h];if(U||(U=y),p>=o&&f===s&&console.error(m),p>=n&&f===c&&console.log(w,U,y),p>=r&&f===d){const t="color: #FFA500; font-family: sans-serif; font-weight: bolder; text-shadow: #000 1px 1px;";console.log(`%cWARN - ${w}`,t,U,y)}if(p>=a&&f===i){const t="color: #FF33D7; font-family: sans-serif; font-weight: bolder; text-shadow: #000 1px 1px;";console.log(`%cDEBUG - ${w}`,t,U,y)}},g=async(t,e,n,o)=>{try{return await p(t,e,n,o),!0}catch(t){return m.warn(`[broadcast] Unexpected error when calling command: "${e}", err: ${t.message}`),null}},p=(t,e,n,o,r=null)=>{if(!chrome.tabs)throw new Error('"tabs" permission not set in manifest.');return chrome.tabs.sendMessage(o,{ipcId:t,command:e,...n},{frameId:r})},h=(t,e={},n)=>(async(t,e,n={},o={})=>{try{if(o?.tabId){const{tabId:r,frameId:a}=o;return await p(t,e,n,r,a)}if(o?.broadcast){const r=await chrome.tabs.query({}),{broadcastIgnoreId:a=[]}=o;return r.filter((({id:t})=>!a.includes(t))).forEach((({id:o})=>{g(t,e,n,o)})),!0}return await chrome.runtime.sendMessage({ipcId:t,command:e,...n})}catch(t){return m.warn(`Unexpected error when calling command: "${e}", err: ${t.message}`),null}})("WA",t,e,n);const F={randomUUID:"undefined"!=typeof crypto&&crypto.randomUUID&&crypto.randomUUID.bind(crypto)};let w;const y=new Uint8Array(16);function U(){if(!w&&(w="undefined"!=typeof crypto&&crypto.getRandomValues&&crypto.getRandomValues.bind(crypto),!w))throw new Error("crypto.getRandomValues() not supported. See https://github.com/uuidjs/uuid#getrandomvalues-not-supported");return w(y)}const E=[];for(let t=0;t<256;++t)E.push((t+256).toString(16).slice(1));function b(t,e=0){return(E[t[e+0]]+E[t[e+1]]+E[t[e+2]]+E[t[e+3]]+"-"+E[t[e+4]]+E[t[e+5]]+"-"+E[t[e+6]]+E[t[e+7]]+"-"+E[t[e+8]]+E[t[e+9]]+"-"+E[t[e+10]]+E[t[e+11]]+E[t[e+12]]+E[t[e+13]]+E[t[e+14]]+E[t[e+15]]).toLowerCase()}const D=function(t,e,n){if(F.randomUUID&&!e&&!t)return F.randomUUID();const o=(t=t||{}).random||(t.rng||U)();if(o[6]=15&o[6]|64,o[8]=63&o[8]|128,e){n=n||0;for(let t=0;t<16;++t)e[n+t]=o[t];return e}return b(o)},I="d7a06d5a-923f-49a1-a344-9ef28dcdfd21";(new class{initEvents(){window.addEventListener("message",(async({source:t,data:e})=>{t===window&&e&&e.command&&e.guid&&e.guid===this.messageUUID&&await h(e.command,e)}))}async init(){var t;this.randGUID=`${D()}`,this.messageUUID=`${this.randGUID}_${I}`,t=()=>{const t=chrome.runtime.getURL("scripts/page_crypto_mining.js"),e=document.createElement("script");e.src=t,e.id=`SCRIPT_${I}`,e.setAttribute("randuuid",this.randGUID),e.type="text/javascript",document.body.appendChild(e),this.initEvents()},"undefined"!=typeof document&&null!==document&&("complete"===document.readyState||"loading"!==document.readyState&&!document.documentElement.doScroll?t():document.addEventListener("DOMContentLoaded",t))}}).init()})();
+//# sourceMappingURL=../sourceMap/chrome/scripts/content_crypto_mining.js.map
