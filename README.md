@@ -20,10 +20,7 @@ To create and download songs seperately
 ```bash
   ./lib.py 
 ```
-Just to only download the songs 
-```bash
-  ./lib.py 
-```
+
 
 
 
