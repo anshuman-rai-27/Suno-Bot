@@ -49,6 +49,8 @@ example:
 
 replace anshumanrishi27@gmail.com with your gmail
 
+* Change the csv file with same header as in sample csv with same file name.
+
 * The chrome profile path you provide make sure that your gmail is logined on that chrome before initializing the script
 
 
