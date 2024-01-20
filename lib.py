@@ -59,7 +59,9 @@ def is_row_dow(file_path, row_index):
     with open(file_path, mode='r') as file:
         reader = csv.reader(file)
         for i, row in enumerate(reader):
-            if i == row_index and len(row) > 1 and row[-2] == 'Yes' and row[-1] == "no":
+            if i == row_index and len(row) > 1 and row[-2] == 'Yes' and row[-1] == "Yes":
+                return True
+            elif i == row_index and len(row) > 1 and row[-2] == 'no' and row[-1] == "no":
                 return True
     return False
 def mark_created(file_path, row_indices):
@@ -213,7 +215,6 @@ def download():
             if is_row_dow(csv_file_path, index_d)&(i%2!=0):
                 print(f"Skipping download for row {index_d} as it is already marked as download.")
                 index_d -= 1
-
                 continue
             elif (is_row_dow(csv_file_path, index_d)):
                 print(f"Skipping download for row {index_d} as it is already marked as download elif.")
@@ -223,32 +224,97 @@ def download():
 
             time.sleep(1)
             element = more_action[i]
-            # driver.execute_script("arguments[0].scrollIntoView();", element)
+            driver.execute_script("arguments[0].scrollIntoView();", element)
             # driver.execute_script("arguments[0].scrollIntoView({behavior: 'auto', block: 'center', inline: 'center'});",
             #                      element)
             time.sleep(1)
-            element.click()
-            print("element")
+            WebDriverWait(driver, 10).until(
+                EC.element_to_be_clickable((element)))
+            print("clicking element")
+            try:
+                element.click()
+            except:
+                print("not clicked")
+            # element.click()
+            target_xpath = '//div[contains(@class, "chakra-menu__menu-list") and contains(@style, "visibility: visible;")]'
+
+            print("element clicked")
+            while True:
+                try:
+                    # Wait until the element becomes invisible
+                    WebDriverWait(driver, 5).until(EC.visibility_of_element_located((By.XPATH, target_xpath)))
+                    print("Element is now after visible.")
+                    # driver.switch_to.active_element.send_keys(Keys.ENTER)
+                    # print("pressed")
+                    break
+
+                except :
+                    time.sleep(2)
+                    print("loop click")
+                    try:
+                        element.click()
+                    except:
+                        print("loop not")
             time.sleep(2)
 
+
             actions = ActionChains(driver)
+            last_pressed_element = None
             for _ in range(5):
                 actions.send_keys(Keys.DOWN)
                 time.sleep(1)  # Add a small delay between key presses
             # download_button = WebDriverWait(driver, 100).until(
-            #     EC.element_to_be_clickable((By.XPATH, '//button[contains(text(), "Download Audio")]'))
+            #     # EC.element_to_be_clickable((By.XPATH, '//button[contains(text(), "Download Audio")]'))
+            # # EC.find_element((By.XPATH, '//button[contains(text(), "Download Audio")]'))
             #     # EC.presence_of_element_located((By.CSS_SELECTOR, '[data-index="5"]'))
             # # EC.element_to_be_clickable((By.CSS_SELECTOR, '[data-index="5"]'))
             # )
+            time.sleep(5)
+            # download_button = element.find_element(By.CSS_SELECTOR, '[data-index="5"]')
+            # download_button.click()
 
             # Simulate pressing the "Enter" key
+            # time.sleep(2)
+            actions.send_keys(Keys.NULL)
             actions.send_keys(Keys.ENTER)
             actions.perform()
+            print("first Enter key pressed")
+            time.sleep(2)
+
+            last_pressed_element = driver.switch_to.active_element
+            # actions = ActionChains(driver)
+            # actions.send_keys(Keys.ENTER)
+            # actions.perform()
+
+
+            while True:
+                try:
+                    # Wait until the element becomes invisible
+                    WebDriverWait(driver, 5).until(EC.visibility_of_element_located((By.XPATH, target_xpath)))
+                    print("Element is now visible.")
+                    time.sleep(2)
+                    # download_button = element.find_element(By.CSS_SELECTOR, '[data-index="5"]')
+                    download_button = WebDriverWait(driver, 100).until(
+                        # EC.element_to_be_clickable((By.XPATH, '//button[contains(text(), "Download Audio")]'))
+                        # EC.find_element((By.XPATH, '//button[contains(text(), "Download Audio")]'))
+                        EC.presence_of_element_located((By.CSS_SELECTOR, '[data-index="5"]'))
+                        # EC.element_to_be_clickable((By.CSS_SELECTOR, '[data-index="5"]'))
+                    )
+
+                    download_button.click()
+                    driver.switch_to.active_element.send_keys(Keys.ENTER)
+                    print("pressed")
+
+                except Exception as e:
+                    print("fine")
+                    break
+                    # Handle exceptions as needed
+
             if(i%2!=0):
                 mark_dow(csv_file_path, [index_d])
                 index_d -= 1
 
-            print("Enter key pressed")
+
             time.sleep(10)
     else:
         upp = to_download
@@ -272,8 +338,12 @@ def download():
                 # Your actions on each element go here
                 time.sleep(1)
                 element = more_action[i]
-                WebDriverWait(driver, 10).until(EC.presence_of_element_located(element))
+                # WebDriverWait(driver, 10).until(EC.presence_of_element_located(element))
+                WebDriverWait(driver, 10).until(
+                    EC.element_to_be_clickable((element)))
+
                 # expected_element.click()
+
                 time.sleep(1)
                 element.click()
                 print("element")
@@ -471,6 +541,7 @@ def download_song():
                 EC.presence_of_element_located((By.CSS_SELECTOR, '[data-index="5"]'))
             )
         # Simulate pressing the "Enter" key
+        time.sleep(2)
         actions.send_keys(Keys.ENTER)
         actions.perform()
         print("Enter key pressed")
