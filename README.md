@@ -3,6 +3,10 @@
 
 It lets you create and download songs from suno.ai
 
+# View
+
+https://youtu.be/bS7rugfpWyM
+
 
 
 
